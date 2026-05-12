@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
+import 'screens/login_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
-  runApp(const BancoDeImagensApp());
+  runApp(const ClassShareApp());
 }
 
-class BancoDeImagensApp extends StatelessWidget {
-  const BancoDeImagensApp({super.key});
+class ClassShareApp extends StatelessWidget {
+  const ClassShareApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Banco de Imagens CDM',
+      title: 'ClassShare',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: AppTheme.theme,
       home: const LoginScreen(),
     );
   }
