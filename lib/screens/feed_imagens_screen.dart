@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import '../models/postagem.dart';
 import '../models/sala.dart';
+import '../widgets/card_postagem.dart';
 import 'nova_postagem_screen.dart';
 
 class FeedImagensScreen extends StatefulWidget {
@@ -33,11 +33,9 @@ class _FeedImagensScreenState extends State<FeedImagensScreen> {
     });
   }
 
-  String _formatarData(String isoDate) {
-    final d = DateTime.parse(isoDate);
-    return '${d.day.toString().padLeft(2, '0')}/'
-        '${d.month.toString().padLeft(2, '0')}/'
-        '${d.year}';
+  Future<void> _excluirPost(Postagem post) async {
+    await _dbHelper.deletePostagem(post.id!);
+    _carregarPosts();
   }
 
   @override
@@ -90,71 +88,9 @@ class _FeedImagensScreenState extends State<FeedImagensScreen> {
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 80),
       itemCount: _posts.length,
-      itemBuilder: (context, index) => _CardPost(
+      itemBuilder: (context, index) => CardPostagem(
         post: _posts[index],
-        formatarData: _formatarData,
-      ),
-    );
-  }
-}
-
-class _CardPost extends StatelessWidget {
-  final Postagem post;
-  final String Function(String) formatarData;
-
-  const _CardPost({required this.post, required this.formatarData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Imagem da postagem
-          Image.file(
-            File(post.caminhoImagem),
-            width: double.infinity,
-            height: 200,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              height: 200,
-              color: Colors.grey[200],
-              child: const Center(
-                child: Icon(Icons.broken_image, size: 48, color: Colors.grey),
-              ),
-            ),
-          ),
-          // Título, descrição e data
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  post.titulo,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (post.descricao.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    post.descricao,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                  ),
-                ],
-                const SizedBox(height: 8),
-                Text(
-                  formatarData(post.data),
-                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                ),
-              ],
-            ),
-          ),
-        ],
+        onDelete: () => _excluirPost(_posts[index]),
       ),
     );
   }

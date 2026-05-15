@@ -29,11 +29,31 @@ class _NovaPostagemScreenState extends State<NovaPostagemScreen> {
     super.dispose();
   }
 
-  Future<void> _selecionarImagem() async {
-    final imagem = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
+  Future<void> _escolherImagem() async {
+    final origem = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Galeria'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Câmera'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
     );
+
+    if (origem == null) return;
+
+    final imagem = await _picker.pickImage(source: origem, imageQuality: 80);
     if (imagem != null) {
       setState(() => _caminhoImagem = imagem.path);
     }
@@ -51,7 +71,7 @@ class _NovaPostagemScreenState extends State<NovaPostagemScreen> {
 
     if (_caminhoImagem == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecione uma imagem da galeria.')),
+        const SnackBar(content: Text('Selecione uma imagem antes de salvar.')),
       );
       return;
     }
@@ -79,54 +99,19 @@ class _NovaPostagemScreenState extends State<NovaPostagemScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Área de seleção da imagem
-            GestureDetector(
-              onTap: _selecionarImagem,
-              child: Container(
-                width: double.infinity,
-                height: 220,
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: _caminhoImagem != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          File(_caminhoImagem!),
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                      )
-                    : const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_photo_alternate_outlined,
-                            size: 52,
-                            color: AppTheme.primary,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Toque para selecionar uma imagem',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-              ),
+            _AreaImagem(
+              caminho: _caminhoImagem,
+              onTap: _escolherImagem,
             ),
             if (_caminhoImagem != null) ...[
               const SizedBox(height: 8),
               TextButton.icon(
-                onPressed: _selecionarImagem,
+                onPressed: _escolherImagem,
                 icon: const Icon(Icons.refresh),
                 label: const Text('Trocar imagem'),
               ),
             ],
             const SizedBox(height: 20),
-
-            // Título
             TextField(
               controller: _tituloController,
               textCapitalization: TextCapitalization.sentences,
@@ -136,8 +121,6 @@ class _NovaPostagemScreenState extends State<NovaPostagemScreen> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Descrição
             TextField(
               controller: _descricaoController,
               textCapitalization: TextCapitalization.sentences,
@@ -149,8 +132,6 @@ class _NovaPostagemScreenState extends State<NovaPostagemScreen> {
               ),
             ),
             const SizedBox(height: 24),
-
-            // Botão Salvar
             SizedBox(
               width: double.infinity,
               height: 55,
@@ -171,6 +152,58 @@ class _NovaPostagemScreenState extends State<NovaPostagemScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AreaImagem extends StatelessWidget {
+  final String? caminho;
+  final VoidCallback onTap;
+
+  const _AreaImagem({required this.caminho, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 220,
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: caminho != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.file(
+                  File(caminho!),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              )
+            : const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_outlined,
+                    size: 52,
+                    color: AppTheme.primary,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Toque para adicionar uma imagem',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Galeria ou câmera',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
       ),
     );
   }

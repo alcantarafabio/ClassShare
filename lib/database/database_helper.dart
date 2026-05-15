@@ -159,4 +159,9 @@ class DatabaseHelper {
     final db = await database;
     return db.insert('posts', row);
   }
+
+  Future<void> deletePostagem(int id) async {
+    final db = await database;
+    await db.delete('posts', where: 'id = ?', whereArgs: [id]);
+  }
 }

@@ -34,7 +34,25 @@ class _SemestresScreenState extends State<SemestresScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Semestres')),
+      appBar: AppBar(
+        title: const Text('ClassShare'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+              child: Text(
+                'Selecione um semestre',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
       body: _carregando
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
