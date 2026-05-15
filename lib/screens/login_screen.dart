@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import 'salas_screen.dart';
+import 'semestres_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const SalasScreen()),
+                        MaterialPageRoute(builder: (_) => const SemestresScreen()),
                       );
                     },
                     child: const Text(

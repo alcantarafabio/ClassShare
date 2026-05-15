@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import '../models/sala.dart';
+import '../models/semestre.dart';
 import '../widgets/card_sala.dart';
 import 'feed_imagens_screen.dart';
 
-// Senha local simples para proteger a exclusão de salas
 const String _senhaMestra = '1234';
 
 class SalasScreen extends StatefulWidget {
-  const SalasScreen({super.key});
+  final Semestre semestre;
+  const SalasScreen({super.key, required this.semestre});
 
   @override
   State<SalasScreen> createState() => _SalasScreenState();
@@ -26,7 +27,7 @@ class _SalasScreenState extends State<SalasScreen> {
   }
 
   Future<void> _carregarSalas() async {
-    final dados = await _dbHelper.getSalas();
+    final dados = await _dbHelper.getSalasPorSemestre(widget.semestre.id!);
     if (!mounted) return;
     setState(() {
       _salas = dados;
@@ -34,7 +35,7 @@ class _SalasScreenState extends State<SalasScreen> {
     });
   }
 
-  // ── Adicionar sala ─────────────────────────────────────────────────────────
+  // ── Adicionar disciplina ───────────────────────────────────────────────────
 
   Future<void> _mostrarDialogAdicionar() async {
     final controller = TextEditingController();
@@ -42,13 +43,13 @@ class _SalasScreenState extends State<SalasScreen> {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Nova Sala'),
+        title: const Text('Nova Disciplina'),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
           decoration: const InputDecoration(
-            labelText: 'Nome da sala ou disciplina',
+            labelText: 'Nome da disciplina',
             border: OutlineInputBorder(),
           ),
         ),
@@ -66,13 +67,13 @@ class _SalasScreenState extends State<SalasScreen> {
     );
 
     if (confirmado == true && controller.text.trim().isNotEmpty) {
-      await _dbHelper.insertSala(controller.text.trim());
+      await _dbHelper.insertSala(controller.text.trim(), widget.semestre.id!);
       _carregarSalas();
     }
     controller.dispose();
   }
 
-  // ── Excluir sala ───────────────────────────────────────────────────────────
+  // ── Excluir disciplina ─────────────────────────────────────────────────────
 
   Future<void> _mostrarDialogExcluir(Sala sala) async {
     final senhaController = TextEditingController();
@@ -80,7 +81,7 @@ class _SalasScreenState extends State<SalasScreen> {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Excluir Sala'),
+        title: const Text('Excluir Disciplina'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +89,7 @@ class _SalasScreenState extends State<SalasScreen> {
             Text('Deseja excluir "${sala.nome}"?'),
             const SizedBox(height: 4),
             const Text(
-              'As fotos desta sala também serão removidas.',
+              'As postagens desta disciplina também serão removidas.',
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -140,12 +141,12 @@ class _SalasScreenState extends State<SalasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Minhas Turmas')),
+      appBar: AppBar(title: Text(widget.semestre.nome)),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _mostrarDialogAdicionar,
         icon: const Icon(Icons.add),
-        label: const Text('Nova Sala'),
+        label: const Text('Nova Disciplina'),
       ),
     );
   }
@@ -163,12 +164,12 @@ class _SalasScreenState extends State<SalasScreen> {
             Icon(Icons.school_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 12),
             Text(
-              'Nenhuma sala cadastrada.',
+              'Nenhuma disciplina neste semestre.',
               style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
             SizedBox(height: 4),
             Text(
-              'Toque em "Nova Sala" para começar.',
+              'Toque em "Nova Disciplina" para começar.',
               style: TextStyle(color: Colors.grey, fontSize: 13),
             ),
           ],
