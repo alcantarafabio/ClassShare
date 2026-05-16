@@ -1,26 +1,20 @@
 # ClassShare
 
-Aplicativo mobile desenvolvido em Flutter para organização e compartilhamento de registros fotográficos acadêmicos por curso, semestre e disciplina.
-
----
+Aplicativo mobile desenvolvido em Flutter para organização e compartilhhamento de registros fotográficos acadêmicos por curso, semestre e disciplina.
 
 ## Sobre o projeto
 
-O ClassShare é um projeto acadêmico que facilita o armazenamento e visualização de conteúdos registrados durante as aulas. Todos os dados são armazenados localmente no dispositivo, sem dependência de internet ou servidores externos.
-
----
+O ClassShare é um projeto acadêmico criado para facilitar o armazenamento e a visualização de conteúdos registrados durante as aulas. Os dados são armazenados localmente no dispositivo utilizando SQLite, sem dependência de servidores externos.
 
 ## Funcionalidades
 
-- Organização por curso, semestre e disciplina
+- Organização por cursos, semestres e disciplinas
 - Feed de postagens com imagem, título, descrição e data
 - Tela de detalhes da postagem
-- Adição de novas disciplinas e cursos
-- Captura de foto pela câmera ou seleção pela galeria
-- Exclusão de cursos, disciplinas e postagens com confirmação
-- Persistência local com SQLite
-
----
+- Adição e exclusão de cursos e disciplinas
+- Captura de fotos pela câmera ou seleção pela galeria
+- Persistência local de dados com SQLite
+- Navegação simples e organizada
 
 ## Tecnologias utilizadas
 
@@ -30,11 +24,8 @@ O ClassShare é um projeto acadêmico que facilita o armazenamento e visualizaç
 - image_picker
 - Material Design 3
 
----
-
 ## Fluxo do aplicativo
 
-```
 Login
 ↓
 Tela de apresentação
@@ -48,45 +39,43 @@ Disciplinas
 Feed de postagens
 ↓
 Detalhes da postagem
-```
-
----
 
 ## Estrutura do projeto
 
-```
 lib/
- ├── database/       → persistência SQLite
- ├── models/         → estrutura dos dados
- ├── screens/        → telas do aplicativo
- ├── theme/          → identidade visual global
- ├── widgets/        → componentes reutilizáveis
- └── main.dart
-```
-
----
+├── database/       → persistência SQLite
+├── models/         → estrutura dos dados
+├── screens/        → telas do aplicativo
+├── theme/          → identidade visual global
+├── widgets/        → componentes reutilizáveis
+└── main.dart
 
 ## Banco de dados
 
 Tabelas utilizadas:
 
-- `cursos`
-- `semestres`
-- `salas`
-- `posts`
-
----
+- cursos
+- semestres
+- salas
+- posts
 
 ## Como executar
 
-**Pré-requisitos:** Flutter SDK instalado e dispositivo/emulador Android configurado.
+Pré-requisitos:
 
-```bash
+- Flutter SDK instalado
+- Dispositivo Android ou emulador configurado
+
 flutter pub get
 flutter run
-```
 
----
+## Melhorias futuras
+
+- Integração com Firebase para sincronização em nuvem
+- Sistema de autenticação de usuários
+- Compartilhamento online de postagens
+- Upload de imagens para armazenamento remoto
+- Organização colaborativa entre alunos
 
 ## Integrantes
 
@@ -96,6 +85,5 @@ flutter run
 - Lucas Ancilon Pavão
 - Paloma Oliveira Cordeiro
 
----
-
 Projeto acadêmico desenvolvido para fins educacionais.
+

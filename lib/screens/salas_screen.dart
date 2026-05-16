@@ -7,6 +7,7 @@ import 'feed_imagens_screen.dart';
 
 class SalasScreen extends StatefulWidget {
   final Semestre semestre;
+
   const SalasScreen({super.key, required this.semestre});
 
   @override
@@ -15,6 +16,7 @@ class SalasScreen extends StatefulWidget {
 
 class _SalasScreenState extends State<SalasScreen> {
   final _dbHelper = DatabaseHelper();
+
   List<Sala> _salas = [];
   bool _carregando = true;
 
@@ -26,7 +28,9 @@ class _SalasScreenState extends State<SalasScreen> {
 
   Future<void> _carregarSalas() async {
     final dados = await _dbHelper.getSalasPorSemestre(widget.semestre.id!);
+
     if (!mounted) return;
+
     setState(() {
       _salas = dados;
       _carregando = false;
@@ -36,20 +40,20 @@ class _SalasScreenState extends State<SalasScreen> {
   // ── Adicionar disciplina ───────────────────────────────────────────────────
 
   Future<void> _mostrarDialogAdicionar() async {
-    final controller = TextEditingController();
+    String nomeDisciplina = '';
 
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Nova Disciplina'),
         content: TextField(
-          controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
           decoration: const InputDecoration(
             labelText: 'Nome da disciplina',
             border: OutlineInputBorder(),
           ),
+          onChanged: (value) => nomeDisciplina = value,
         ),
         actions: [
           TextButton(
@@ -64,11 +68,15 @@ class _SalasScreenState extends State<SalasScreen> {
       ),
     );
 
-    if (confirmado == true && controller.text.trim().isNotEmpty) {
-      await _dbHelper.insertSala(controller.text.trim(), widget.semestre.id!);
+    if (!mounted) return;
+
+    if (confirmado == true && nomeDisciplina.trim().isNotEmpty) {
+      await _dbHelper.insertSala(nomeDisciplina.trim(), widget.semestre.id!);
+
+      if (!mounted) return;
+
       _carregarSalas();
     }
-    controller.dispose();
   }
 
   // ── Excluir disciplina ─────────────────────────────────────────────────────
@@ -104,9 +112,13 @@ class _SalasScreenState extends State<SalasScreen> {
       ),
     );
 
+    if (!mounted) return;
+
     if (confirmado == true) {
       await _dbHelper.deleteSala(sala.id!);
+
       if (!mounted) return;
+
       _carregarSalas();
     }
   }
@@ -157,13 +169,12 @@ class _SalasScreenState extends State<SalasScreen> {
       itemCount: _salas.length,
       itemBuilder: (context, index) {
         final sala = _salas[index];
+
         return CardSala(
           sala: sala,
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => FeedImagensScreen(sala: sala),
-            ),
+            MaterialPageRoute(builder: (_) => FeedImagensScreen(sala: sala)),
           ),
           onDelete: () => _mostrarDialogExcluir(sala),
         );
