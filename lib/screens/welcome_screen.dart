@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import 'semestres_screen.dart';
+import 'cursos_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -98,7 +98,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: FilledButton(
                   onPressed: () => Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) => const SemestresScreen()),
+                    MaterialPageRoute(builder: (_) => const CursosScreen()),
                   ),
                   child: const Text(
                     'Começar',

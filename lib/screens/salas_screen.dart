@@ -5,8 +5,6 @@ import '../models/semestre.dart';
 import '../widgets/card_sala.dart';
 import 'feed_imagens_screen.dart';
 
-const String _senhaMestra = '1234';
-
 class SalasScreen extends StatefulWidget {
   final Semestre semestre;
   const SalasScreen({super.key, required this.semestre});
@@ -76,8 +74,6 @@ class _SalasScreenState extends State<SalasScreen> {
   // ── Excluir disciplina ─────────────────────────────────────────────────────
 
   Future<void> _mostrarDialogExcluir(Sala sala) async {
-    final senhaController = TextEditingController();
-
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -91,17 +87,6 @@ class _SalasScreenState extends State<SalasScreen> {
             const Text(
               'As postagens desta disciplina também serão removidas.',
               style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: senhaController,
-              obscureText: true,
-              autofocus: true,
-              decoration: const InputDecoration(
-                labelText: 'Senha mestra',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock_outline),
-              ),
             ),
           ],
         ),
@@ -120,20 +105,10 @@ class _SalasScreenState extends State<SalasScreen> {
     );
 
     if (confirmado == true) {
-      if (senhaController.text == _senhaMestra) {
-        await _dbHelper.deleteSala(sala.id!);
-        _carregarSalas();
-      } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Senha incorreta. Exclusão cancelada.'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
+      await _dbHelper.deleteSala(sala.id!);
+      if (!mounted) return;
+      _carregarSalas();
     }
-    senhaController.dispose();
   }
 
   // ── UI ─────────────────────────────────────────────────────────────────────

@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import '../models/curso.dart';
 import '../models/postagem.dart';
 import '../models/sala.dart';
 import '../models/semestre.dart';
@@ -20,7 +21,7 @@ class DatabaseHelper {
     final path = join(await getDatabasesPath(), 'classshare.db');
     return openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _criar,
       onUpgrade: _migrar,
     );
@@ -30,7 +31,14 @@ class DatabaseHelper {
 
   Future<void> _criar(Database db, int version) async {
     await db.execute(
-      'CREATE TABLE semestres(id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT NOT NULL)',
+      'CREATE TABLE cursos(id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT NOT NULL)',
+    );
+    await db.execute(
+      'CREATE TABLE semestres('
+      '  id INTEGER PRIMARY KEY AUTOINCREMENT,'
+      '  nome TEXT NOT NULL,'
+      '  curso_id INTEGER NOT NULL'
+      ')',
     );
     await db.execute(
       'CREATE TABLE salas('
@@ -56,26 +64,17 @@ class DatabaseHelper {
 
   Future<void> _migrar(Database db, int versaoAntiga, int versaoNova) async {
     if (versaoAntiga < 3) {
-      // 1. Cria tabela de semestres
       await db.execute(
         'CREATE TABLE IF NOT EXISTS semestres('
         '  id INTEGER PRIMARY KEY AUTOINCREMENT,'
         '  nome TEXT NOT NULL'
         ')',
       );
-
-      // 2. Insere os semestres em ordem — 4º semestre receberá id=4
       for (int i = 1; i <= 5; i++) {
         await db.insert('semestres', {'nome': '$iº Semestre'});
       }
-
-      // 3. Adiciona coluna semestre_id à tabela salas existente
       await db.execute('ALTER TABLE salas ADD COLUMN semestre_id INTEGER');
-
-      // 4. Associa todas as disciplinas existentes ao 4º semestre
       await db.update('salas', {'semestre_id': 4});
-
-      // 5. Cria tabela de postagens (substitui a tabela imagens)
       await db.execute(
         'CREATE TABLE posts('
         '  id INTEGER PRIMARY KEY AUTOINCREMENT,'
@@ -86,18 +85,45 @@ class DatabaseHelper {
         '  data TEXT NOT NULL'
         ')',
       );
-
-      // 6. Remove tabela antiga que não é mais usada
       await db.execute('DROP TABLE IF EXISTS imagens');
+    }
+
+    if (versaoAntiga < 4) {
+      // Cria tabela de cursos
+      await db.execute(
+        'CREATE TABLE IF NOT EXISTS cursos('
+        '  id INTEGER PRIMARY KEY AUTOINCREMENT,'
+        '  nome TEXT NOT NULL'
+        ')',
+      );
+
+      // Insere o curso ADS e guarda seu id
+      final cursoId = await db.insert(
+        'cursos',
+        {'nome': 'Análise e Desenvolvimento de Sistemas (ADS)'},
+      );
+
+      // Adiciona coluna curso_id à tabela semestres
+      await db.execute('ALTER TABLE semestres ADD COLUMN curso_id INTEGER');
+
+      // Associa todos os semestres existentes ao curso ADS
+      await db.update('semestres', {'curso_id': cursoId});
     }
   }
 
   Future<void> _inserirDadosIniciais(Database db) async {
-    // Semestres inseridos em ordem: id 1→"1º", 2→"2º", ..., 4→"4º", 5→"5º"
+    // Curso inicial: ADS
+    final cursoId = await db.insert(
+      'cursos',
+      {'nome': 'Análise e Desenvolvimento de Sistemas (ADS)'},
+    );
+
+    // Semestres do curso ADS
     for (int i = 1; i <= 5; i++) {
-      await db.insert('semestres', {'nome': '$iº Semestre'});
+      await db.insert('semestres', {'nome': '$iº Semestre', 'curso_id': cursoId});
     }
 
+    // Disciplinas padrão no 4º semestre (id = 4)
     final disciplinas = [
       'Computação para Dispositivos Móveis',
       'Pesquisa, Ordenação e Técnicas de Armazenamento',
@@ -109,11 +135,53 @@ class DatabaseHelper {
     }
   }
 
+  // ── Cursos ────────────────────────────────────────────────────────────────
+
+  Future<List<Curso>> getCursos() async {
+    final db = await database;
+    final maps = await db.query('cursos', orderBy: 'id ASC');
+    return maps.map((m) => Curso.fromMap(m)).toList();
+  }
+
+  Future<int> insertCurso(String nome) async {
+    final db = await database;
+    return db.insert('cursos', {'nome': nome});
+  }
+
+  Future<void> deleteCurso(int id) async {
+    final db = await database;
+    // Busca semestres do curso para deletar cascata
+    final semestres = await db.query(
+      'semestres',
+      where: 'curso_id = ?',
+      whereArgs: [id],
+    );
+    for (final s in semestres) {
+      final semestreId = s['id'] as int;
+      final salas = await db.query(
+        'salas',
+        where: 'semestre_id = ?',
+        whereArgs: [semestreId],
+      );
+      for (final sala in salas) {
+        await db.delete('posts', where: 'sala_id = ?', whereArgs: [sala['id']]);
+      }
+      await db.delete('salas', where: 'semestre_id = ?', whereArgs: [semestreId]);
+    }
+    await db.delete('semestres', where: 'curso_id = ?', whereArgs: [id]);
+    await db.delete('cursos', where: 'id = ?', whereArgs: [id]);
+  }
+
   // ── Semestres ─────────────────────────────────────────────────────────────
 
-  Future<List<Semestre>> getSemestres() async {
+  Future<List<Semestre>> getSemestresPorCurso(int cursoId) async {
     final db = await database;
-    final maps = await db.query('semestres', orderBy: 'id ASC');
+    final maps = await db.query(
+      'semestres',
+      where: 'curso_id = ?',
+      whereArgs: [cursoId],
+      orderBy: 'id ASC',
+    );
     return maps.map((m) => Semestre.fromMap(m)).toList();
   }
 
@@ -137,7 +205,6 @@ class DatabaseHelper {
 
   Future<void> deleteSala(int id) async {
     final db = await database;
-    // Remove as postagens vinculadas antes de deletar a sala
     await db.delete('posts', where: 'sala_id = ?', whereArgs: [id]);
     await db.delete('salas', where: 'id = ?', whereArgs: [id]);
   }
