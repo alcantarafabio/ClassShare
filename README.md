@@ -1,6 +1,6 @@
 # ClassShare
 
-Aplicativo mobile desenvolvido em Flutter para organização e compartilhhamento de registros fotográficos acadêmicos por curso, semestre e disciplina.
+Aplicativo mobile desenvolvido em Flutter para organização e compartilhamento de registros fotográficos acadêmicos por curso, semestre e disciplina.
 
 ## Sobre o projeto
 
