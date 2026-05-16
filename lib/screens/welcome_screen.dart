@@ -84,7 +84,7 @@ class WelcomeScreen extends StatelessWidget {
                 'Paloma Oliveira Cordeiro',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 16,
                   color: Colors.grey[700],
                   height: 1.5,
                 ),
