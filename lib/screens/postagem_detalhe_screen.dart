@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/postagem.dart';
 
 class PostagemDetalheScreen extends StatelessWidget {
@@ -13,10 +14,37 @@ class PostagemDetalheScreen extends StatelessWidget {
         '${d.year}';
   }
 
+  Future<void> _compartilhar() async {
+    final texto = post.descricao.isNotEmpty
+        ? '${post.titulo}\n\n${post.descricao}'
+        : post.titulo;
+
+    final arquivo = File(post.caminhoImagem);
+    if (await arquivo.exists()) {
+      await Share.shareXFiles(
+        [XFile(post.caminhoImagem)],
+        text: texto,
+      );
+    } else {
+      await Share.share(texto);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(post.titulo)),
+      appBar: AppBar(
+        title: Text(post.titulo),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: 'Compartilhar',
+            onPressed: () {
+              _compartilhar();
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

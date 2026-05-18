@@ -20,6 +20,9 @@ dependencies:
   # Seleção de imagens
   image_picker: ^1.0.7
 
+  # Compartilhamento nativo do SO
+  share_plus: ^10.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
