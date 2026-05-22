@@ -4,7 +4,7 @@ Aplicativo mobile desenvolvido em Flutter para organização e compartilhamento 
 
 ## Sobre o projeto
 
-O ClassShare é um projeto acadêmico criado para facilitar o armazenamento e a visualização de conteúdos registrados durante as aulas. Os dados são armazenados localmente no dispositivo utilizando SQLite, sem dependência de servidores externos.
+O ClassShare é um aplicativo desenvolvido para facilitar o armazenamento e a visualização de conteúdos registrados durante as aulas. Os dados são armazenados localmente no dispositivo utilizando SQLite, sem dependência de servidores externos.
 
 ## Funcionalidades
 
@@ -59,12 +59,17 @@ Tabelas utilizadas:
 - salas
 - posts
 
+## Compatibilidades
+
+- Android
+- iOS
+
 ## Como executar
 
 Pré-requisitos:
 
 - Flutter SDK instalado
-- Dispositivo Android ou emulador configurado
+- Dispositivos Android e iOS, bem como seus respectivos emuladores e simuladores.
 
 flutter pub get
 flutter run
