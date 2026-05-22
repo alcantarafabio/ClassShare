@@ -43,6 +43,7 @@ String nomeCurso = '';
 final confirmado = await showDialog<bool>(
   context: context,
   builder: (ctx) => AlertDialog(
+    scrollable: true,
     title: const Text('Novo Curso'),
     content: TextField(
       autofocus: true,
@@ -83,6 +84,7 @@ Future<void> _mostrarDialogExcluir(Curso curso) async {
 final confirmado = await showDialog<bool>(
 context: context,
 builder: (ctx) => AlertDialog(
+scrollable: true,
 title: const Text('Excluir Curso'),
 content: Column(
 mainAxisSize: MainAxisSize.min,

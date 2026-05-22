@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'cursos_screen.dart';
@@ -7,18 +9,20 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ios = Platform.isIOS;
+
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: ios ? 28 : 20),
           child: Column(
             children: [
-              const Spacer(),
+              SizedBox(height: ios ? 24 : 12),
 
               const Icon(Icons.school, size: 80, color: AppTheme.primary),
 
-              const SizedBox(height: 16),
+              SizedBox(height: ios ? 24 : 16),
 
               const Text(
                 'ClassShare',
@@ -29,7 +33,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              SizedBox(height: ios ? 16 : 12),
 
               Text(
                 'Organize e compartilhe registros fotográficos\n'
@@ -42,28 +46,28 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 48),
+              SizedBox(height: ios ? 32 : 24),
 
               const _InfoItem(
                 icon: Icons.calendar_month_outlined,
                 label: 'Organize por semestres',
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: ios ? 16 : 12),
 
               const _InfoItem(
                 icon: Icons.class_outlined,
                 label: 'Separe por disciplina',
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: ios ? 16 : 12),
 
               const _InfoItem(
                 icon: Icons.photo_library_outlined,
                 label: 'Registre com fotos e descrições',
               ),
 
-              const SizedBox(height: 32),
+              SizedBox(height: ios ? 28 : 20),
 
               Text(
                 'Projeto acadêmico desenvolvido por:',
@@ -74,7 +78,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              SizedBox(height: ios ? 16 : 12),
 
               Text(
                 'Erick Alves da Silva\n'
@@ -90,11 +94,10 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const Spacer(),
+              SizedBox(height: ios ? 28 : 20),
 
               SizedBox(
                 width: double.infinity,
-                height: 55,
                 child: FilledButton(
                   onPressed: () => Navigator.pushReplacement(
                     context,
@@ -106,6 +109,8 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
+              SizedBox(height: ios ? 16 : 8),
             ],
           ),
         ),
@@ -135,7 +140,7 @@ class _InfoItem extends StatelessWidget {
 
         const SizedBox(width: 16),
 
-        Text(label, style: const TextStyle(fontSize: 15)),
+        Flexible(child: Text(label, style: const TextStyle(fontSize: 15))),
       ],
     );
   }

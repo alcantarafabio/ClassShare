@@ -134,7 +134,6 @@ class _NovaPostagemScreenState extends State<NovaPostagemScreen> {
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              height: 55,
               child: FilledButton.icon(
                 onPressed: _salvando ? null : _salvar,
                 icon: _salvando

@@ -20,6 +20,7 @@ class CardPostagem extends StatelessWidget {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        scrollable: true,
         title: const Text('Excluir Postagem'),
         content: Text('Deseja excluir "${post.titulo}"?'),
         actions: [
@@ -74,6 +75,8 @@ class CardPostagem extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           post.descricao,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey[700],

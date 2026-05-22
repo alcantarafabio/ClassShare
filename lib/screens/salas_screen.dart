@@ -45,6 +45,7 @@ class _SalasScreenState extends State<SalasScreen> {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        scrollable: true,
         title: const Text('Nova Disciplina'),
         content: TextField(
           autofocus: true,
@@ -85,6 +86,7 @@ class _SalasScreenState extends State<SalasScreen> {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        scrollable: true,
         title: const Text('Excluir Disciplina'),
         content: Column(
           mainAxisSize: MainAxisSize.min,

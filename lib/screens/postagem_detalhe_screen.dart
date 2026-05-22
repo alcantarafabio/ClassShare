@@ -96,9 +96,11 @@ class PostagemDetalheScreen extends StatelessWidget {
                         color: Colors.grey,
                       ),
                       const SizedBox(width: 6),
-                      Text(
-                        _formatarData(post.data),
-                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                      Flexible(
+                        child: Text(
+                          _formatarData(post.data),
+                          style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                        ),
                       ),
                     ],
                   ),

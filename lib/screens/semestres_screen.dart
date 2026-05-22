@@ -39,11 +39,11 @@ class _SemestresScreenState extends State<SemestresScreen> {
       appBar: AppBar(
         title: Text(widget.curso.nome),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
+          preferredSize: const Size.fromHeight(44),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
               child: Text(
                 'Selecione um semestre',
                 style: TextStyle(
